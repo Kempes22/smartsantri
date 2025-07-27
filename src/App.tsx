@@ -11,16 +11,22 @@ import Statistik from './pages/Statistik';
 import Login from './pages/Login';
 import Profil from './pages/Profil';
 import MonitoringBulanan from "./pages/MonitoringBulanan";
+import SantriData from './pages/admin/SantriData';
 
 export default function App() {
   const [user, setUser] = useState<any>(null);
 
-  // Ambil data user dari localStorage saat pertama kali buka
+  // Ambil data user dari localStorage & pantau perubahan
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const updateUser = () => {
+      const storedUser = localStorage.getItem('user');
+      setUser(storedUser ? JSON.parse(storedUser) : null);
+    };
+
+    updateUser(); // pertama kali mount
+
+    window.addEventListener('storage', updateUser);
+    return () => window.removeEventListener('storage', updateUser);
   }, []);
 
   return (
@@ -29,69 +35,51 @@ export default function App() {
       {user && <Navbar />}
 
       <Routes>
-        {/* Halaman login tidak perlu proteksi */}
         <Route path="/login" element={<Login />} />
 
-        {/* Dashboard bisa diakses siapa saja yang sudah login */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
 
-        {/* Absensi hanya bisa diakses oleh guru */}
-        <Route
-          path="/absensi"
-          element={
-            <ProtectedRoute role="guru">
-              <Absensi />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/absensi" element={
+          <ProtectedRoute role="guru">
+            <Absensi />
+          </ProtectedRoute>
+        } />
 
-        {/* Hasil Belajar bisa diakses guru dan santri */}
-        <Route
-          path="/hasil-belajar"
-          element={
-            <ProtectedRoute>
-              <HasilBelajar />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/hasil-belajar" element={
+          <ProtectedRoute>
+            <HasilBelajar />
+          </ProtectedRoute>
+        } />
 
-        {/* Statistik bisa diakses siapa saja yang login */}
-        <Route
-          path="/statistik"
-          element={
-            <ProtectedRoute>
-              <Statistik />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/statistik" element={
+          <ProtectedRoute>
+            <Statistik />
+          </ProtectedRoute>
+        } />
 
-        {/* Profil user yang login */}
-        <Route
-          path="/profil"
-          element={
-            <ProtectedRoute>
-              <Profil />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/profil" element={
+          <ProtectedRoute>
+            <Profil />
+          </ProtectedRoute>
+        } />
 
-        <Route 
-           path="/admin/monitoring" 
-          element={
-            <ProtectedRoute role="admin">
-              <MonitoringBulanan />
-            </ProtectedRoute>
-        }
-        />
+        <Route path="/admin/santri" element={
+          <ProtectedRoute role="admin">
+            <SantriData />
+          </ProtectedRoute>
+        } />
 
-        {/* Redirect semua path tak dikenal ke Dashboard */}
+        <Route path="/admin/monitoring" element={
+          <ProtectedRoute role="admin">
+            <MonitoringBulanan />
+          </ProtectedRoute>
+        } />
+
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

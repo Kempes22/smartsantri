@@ -28,19 +28,19 @@ export default function Navbar() {
       <ul className="flex gap-6 font-medium text-blue-600">
         <li><Link to="/" className={linkClass('/')}>Dashboard</Link></li>
 
-        {/* Tampilkan jika role adalah 'guru' */}
         {user?.role === 'guru' && (
           <li><Link to="/absensi" className={linkClass('/absensi')}>Absensi</Link></li>
         )}
 
-        {/* Hasil belajar bisa dilihat semua user */}
         <li><Link to="/hasil-belajar" className={linkClass('/hasil-belajar')}>Hasil Belajar</Link></li>
         <li><Link to="/statistik" className={linkClass('/statistik')}>Statistik</Link></li>
         <li><Link to="/profil" className={linkClass('/profil')}>Profil</Link></li>
 
-        {/* Monitoring khusus admin */}
         {user?.role === 'admin' && (
-          <li><Link to="/admin/monitoring" className={linkClass('/admin/monitoring')}>Monitoring Bulanan</Link></li>
+          <>
+            <li><Link to="/admin/santri" className={linkClass('/admin/santri')}>Data Santri</Link></li>
+            <li><Link to="/admin/monitoring" className={linkClass('/admin/monitoring')}>Monitoring Bulanan</Link></li>
+          </>
         )}
       </ul>
 
